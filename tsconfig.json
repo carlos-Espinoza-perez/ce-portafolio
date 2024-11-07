@@ -1,3 +1,11 @@
 {
-  "extends": "astro/tsconfigs/strict"
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "paths": {
+      "@template/*": ["./src/UI/template/*"],
+      "@organisms/*": ["./src/UI/organisms/*"],
+      "@molecules/*": ["./src/UI/molecules/*"],
+      "@atoms/*": ["./src/UI/atoms/*"]
+    }
+  }
 }

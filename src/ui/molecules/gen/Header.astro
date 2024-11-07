@@ -1,0 +1,146 @@
+---
+import { CloseIcon, MenuIcon } from "../../atoms";
+import Footer from "../gen/Footer.astro";
+---
+
+<style>
+  :root {
+    --padding-navbar: 22px 26px 0 26px;
+  }
+
+  .height-header {
+    height: 63px;
+  }
+
+  header {
+    transition: 0.3s background-color;
+
+    &.menu-open:not(.menu-movile) {
+      background-color: var(--color-background);
+      height: 100dvh;
+    }
+  }
+
+  nav {
+    padding: var(--padding-navbar);
+    margin-bottom: 12px;
+    transition: 0.3s padding;
+
+    width: 100%;
+    position: absolute;
+
+    ul {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .line-header {
+      width: calc(100% + 20px);
+      height: 1.5px;
+      background: var(--color-line-gray);
+      margin-top: 16px;
+      margin-left: -10px;
+    }
+
+    &.menu-open {
+      padding: 30px;
+
+      .menu-icon {
+        display: none;
+      }
+
+      .close-icon {
+        display: block;
+      }
+    }
+
+    .close-icon {
+      display: none;
+    }
+  }
+
+  .menu-movile {
+    opacity: 0;
+    z-index: -1;
+    pointer-events: none;
+    transition: 0.3s;
+
+    width: 100%;
+    position: absolute;
+    top: 74px;
+
+    .list-options-menu {
+      width: calc(100% - 40px);
+    }
+
+    .option-menu {
+      padding: 16px 18px;
+
+      font-size: 16px;
+      color: white;
+      position: relative;
+
+      border-bottom: 1.5px solid var(--color-line-gray);
+    }
+
+    &.menu-open {
+      position: sticky;
+
+      opacity: 1;
+      pointer-events: all;
+      z-index: 1;
+    }
+  }
+
+  li {
+    color: var(--color-text-gray);
+  }
+</style>
+
+<div>
+  <div class="height-header"></div>
+
+  <header class="fixed top-0 w-full">
+    <nav class="nav-container">
+      <ul>
+        <li>carlos-espinoza</li>
+        <li class="btn-menu">
+          <MenuIcon />
+          <CloseIcon />
+        </li>
+      </ul>
+
+      <div class="line-header"></div>
+    </nav>
+
+    <div class="menu-movile">
+      <ul class="list-options-menu mx-auto">
+        <li class="option-menu">_incio</li>
+        <li class="option-menu">_acerca-de</li>
+        <li class="option-menu">_proyectos</li>
+        <li class="option-menu">_contactame</li>
+      </ul>
+
+      <Footer isMovile={true} />
+    </div>
+  </header>
+</div>
+
+<script>
+  const initEventsView = () => {
+    const header = document.querySelector("header");
+    const menuMovile = document.querySelector(".menu-movile");
+    const navContainer = document.querySelector(".nav-container");
+
+    const menuIcon = document.querySelector(".btn-menu");
+
+    if (!menuIcon || !header || !menuMovile || !navContainer) return;
+    menuIcon.addEventListener("click", () => {
+      header.classList.toggle("menu-open");
+      menuMovile.classList.toggle("menu-open");
+      navContainer.classList.toggle("menu-open");
+    });
+  };
+
+  initEventsView();
+</script>

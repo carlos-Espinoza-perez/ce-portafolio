@@ -1,0 +1,158 @@
+---
+import { DashboardBlur } from "../../atoms";
+---
+
+<style>
+  main {
+    color: white;
+    padding: 40px;
+    padding-top: 70px;
+  }
+
+  .wrapper-text {
+    h4 {
+      font-size: 18px;
+      color: #e5e9f0;
+    }
+
+    h1 {
+      font-size: 45px;
+      letter-spacing: 0;
+      line-height: 100%;
+
+      margin-top: 20px;
+    }
+
+    h6 {
+      color: var(--color-primary);
+      margin-top: 22px;
+      font-size: 18px;
+      letter-spacing: 0;
+
+      width: fit-content;
+
+      &::after {
+        content: "|";
+        margin-right: 10px;
+        position: relative;
+        z-index: -1;
+
+        animation: typingEffect 1s infinite;
+      }
+    }
+  }
+
+  .wrapper-image {
+    position: absolute;
+    z-index: -1;
+
+    width: 150vw;
+    left: -50%;
+    top: 16px;
+
+    overflow: hidden;
+  }
+
+  @keyframes typingEffect {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0;
+      transform: scale(0);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>
+
+<main>
+  <div class="wrapper-text">
+    <h4>Hola, mi nombre es</h4>
+    <h1>Carlos Espinoza</h1>
+    <!-- <h6>
+      {">"} Desarollador full-stack
+    </h6> -->
+    <h6>{">"} Desarollador full-stack</h6>
+  </div>
+
+  <div class="wrapper-image">
+    <DashboardBlur />
+  </div>
+</main>
+
+<script>
+  const profession = document.querySelector("h6");
+  let index = 0;
+
+  const listProfessions = [
+    "Desarollador Full-Stack",
+    "Desarrollador Front-End",
+    "Desarrollador Back-End",
+    "Desarollador de Software",
+    "Estudiante de Ingenieria",
+    "Gestión de Base de Datos",
+  ];
+
+  const loadEffectWriter = () => {
+    if (!profession) return;
+    profession.innerHTML = "> ";
+
+    let isWriting = true;
+    let indexLetter = 0;
+    let letterMax = listProfessions[index].length - 1;
+
+    const showLetter = () => {
+      let word = listProfessions[index];
+      if (!word) {
+        index = 0;
+        word = listProfessions[index];
+      }
+
+      letterMax = word.length - 1;
+
+      if (isWriting) {
+        if (profession.innerHTML == "&gt;") profession.innerHTML += " ";
+        profession.innerHTML += word.charAt(indexLetter);
+
+        indexLetter++;
+        if (indexLetter > letterMax) {
+          isWriting = false;
+        }
+      } else {
+        profession.innerHTML = profession.innerHTML.slice(0, -1);
+
+        indexLetter--;
+        if (indexLetter < 0) {
+          isWriting = true;
+          indexLetter = 0;
+          index++;
+        }
+      }
+    };
+
+    showLetter();
+
+    let intervalTime = 0;
+    let intervalMax = 10;
+
+    setInterval(() => {
+      if (indexLetter - 1 == letterMax) {
+        intervalTime += 1;
+
+        if (intervalMax == intervalTime) {
+          intervalTime = 0;
+        } else return;
+      }
+
+      showLetter();
+    }, 100);
+  };
+
+  loadEffectWriter();
+</script>

@@ -1,0 +1,103 @@
+---
+import { FacebookIcon, GithubIcon, TwitterIcon } from "../../atoms";
+
+const { isMovile } = Astro.props;
+---
+
+<footer>
+  <div class="footer-container">
+    <div class="line-footer"></div>
+    <h4 class="encuentrame">Encuentrame en:</h4>
+
+    <ul class="social-media">
+      <li class="icon-social twitter">
+        <TwitterIcon />
+      </li>
+
+      <li class="icon-social facebook">
+        <FacebookIcon />
+      </li>
+
+      {
+        isMovile && (
+          <li class="icon-social github">
+            <GithubIcon />
+          </li>
+        )
+      }
+    </ul>
+
+    {
+      !isMovile && (
+        <ul>
+          <li>
+            <a>@carlos-Espinoza-perez</a>
+            <GithubIcon />
+          </li>
+        </ul>
+      )
+    }
+  </div>
+</footer>
+
+<style>
+  footer {
+    padding: 0px 15px 15px 15px;
+
+    position: absolute;
+    width: 100%;
+    top: calc(100dvh - 63px - 74px);
+  }
+
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+
+    .line-footer {
+      width: 100%;
+      height: 2px;
+      background: var(--color-line-gray);
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  .encuentrame {
+    height: 48px;
+    display: flex;
+    align-items: center;
+
+    padding-left: 14px;
+    padding-right: 28px;
+
+    color: var(--color-text-gray);
+  }
+
+  .social-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--color-text-gray);
+
+    .icon-social {
+      width: 52px;
+      height: 48px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-right: 2px solid var(--color-line-gray);
+
+      &:last-of-type {
+        border-right: none;
+      }
+
+      &:first-of-type {
+        border-left: 2px solid var(--color-line-gray);
+      }
+    }
+  }
+</style>
