@@ -8,9 +8,11 @@ export default defineConfig({
     server: {
       watch: {
         usePolling: true,
+        persistent: true,
       },
       hmr: {
         overlay: true,
+        clientPort: 4321,
       },
     },
   },

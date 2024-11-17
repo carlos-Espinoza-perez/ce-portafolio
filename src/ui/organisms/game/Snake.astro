@@ -1,0 +1,510 @@
+<canvas></canvas>
+
+<script>
+  type Snake = {
+    x: number;
+    y: number;
+    direction: "top" | "right" | "bottom" | "left";
+    speed: number;
+  };
+
+  const getCanvas = () => {
+    let canvas = document.querySelector("canvas");
+    if (!canvas) canvas = document.createElement("canvas");
+
+    canvas.height = canvas.parentElement?.offsetHeight || 300;
+    canvas.width = canvas.parentElement?.offsetWidth || 300;
+
+    return canvas;
+  };
+
+  const canvas = getCanvas();
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+  const widthSquare = 8;
+  const heightSquare = 8;
+
+  const listEclipseAppleCtx: CanvasRenderingContext2D[] = [];
+  const color = "67, 217, 173";
+
+  let snake: Snake = {
+    x: 120,
+    y: 80,
+    direction: "top",
+    speed: 200,
+  };
+
+  const snakeCopy: Snake = {
+    x: 120,
+    y: 80,
+    direction: "top",
+    speed: 200,
+  };
+
+  let snakeBody = [
+    { x: snake.x, y: snake.y },
+    { x: snake.x, y: snake.y + 8 },
+    { x: snake.x, y: snake.y + 16 },
+    { x: snake.x, y: snake.y + 24 },
+    { x: snake.x, y: snake.y + 32 },
+    { x: snake.x, y: snake.y + 40 },
+    { x: snake.x, y: snake.y + 48 },
+    { x: snake.x, y: snake.y + 56 },
+    { x: snake.x, y: snake.y + 64 },
+    { x: snake.x + 8, y: snake.y + 64 },
+    { x: snake.x + 16, y: snake.y + 64 },
+    { x: snake.x + 24, y: snake.y + 64 },
+    { x: snake.x + 32, y: snake.y + 64 },
+    { x: snake.x + 40, y: snake.y + 64 },
+    { x: snake.x + 48, y: snake.y + 64 },
+    { x: snake.x + 56, y: snake.y + 64 },
+    { x: snake.x + 64, y: snake.y + 64 },
+    { x: snake.x + 64, y: snake.y + 72 },
+    { x: snake.x + 64, y: snake.y + 80 },
+    { x: snake.x + 64, y: snake.y + 88 },
+    { x: snake.x + 64, y: snake.y + 96 },
+    { x: snake.x + 64, y: snake.y + 104 },
+  ];
+
+  const snakeBodyCopy = [
+    { x: snake.x, y: snake.y },
+    { x: snake.x, y: snake.y + 8 },
+    { x: snake.x, y: snake.y + 16 },
+    { x: snake.x, y: snake.y + 24 },
+    { x: snake.x, y: snake.y + 32 },
+    { x: snake.x, y: snake.y + 40 },
+    { x: snake.x, y: snake.y + 48 },
+    { x: snake.x, y: snake.y + 56 },
+    { x: snake.x, y: snake.y + 64 },
+    { x: snake.x + 8, y: snake.y + 64 },
+    { x: snake.x + 16, y: snake.y + 64 },
+    { x: snake.x + 24, y: snake.y + 64 },
+    { x: snake.x + 32, y: snake.y + 64 },
+    { x: snake.x + 40, y: snake.y + 64 },
+    { x: snake.x + 48, y: snake.y + 64 },
+    { x: snake.x + 56, y: snake.y + 64 },
+    { x: snake.x + 64, y: snake.y + 64 },
+    { x: snake.x + 64, y: snake.y + 72 },
+    { x: snake.x + 64, y: snake.y + 80 },
+    { x: snake.x + 64, y: snake.y + 88 },
+    { x: snake.x + 64, y: snake.y + 96 },
+    { x: snake.x + 64, y: snake.y + 104 },
+  ];
+
+  const apple = {
+    x: Math.floor(Math.random() * (canvas.width - 30)) + 30,
+    y: Math.floor(Math.random() * (canvas.height - 30)) + 30,
+  };
+
+  let gameOver = false;
+
+  // #region Drawing
+  const getRandomApple = () => {
+    if (gameOver) return;
+    let x = Math.floor(Math.random() * (canvas.width - 30)) + 30;
+    let y = Math.floor(Math.random() * (canvas.height - 30)) + 30;
+
+    x = Math.round(x / widthSquare) * widthSquare;
+    y = Math.round(y / heightSquare) * heightSquare;
+
+    const existSnakePart = snakeBody.find((item) => item.x == x && item.y == y);
+    if (existSnakePart) return getRandomApple();
+
+    apple.x = x;
+    apple.y = y;
+  };
+
+  const getGrade = (index: number) => {
+    if (index == 0.05) index = 0;
+
+    const snakePart = snakeBody[index];
+    const lessSnakePart: { x: number; y: number } | undefined =
+      snakeBody[index - 1];
+
+    const linearGradientDirection = {
+      x1: lessSnakePart?.x || snakePart.x,
+      y1: lessSnakePart?.y || snakePart.y,
+      x2: lessSnakePart?.x || snakePart.x,
+      y2: lessSnakePart?.y || snakePart.y,
+    };
+
+    if (lessSnakePart) {
+      // El cuadro anterior esta arriba
+      if (lessSnakePart.y < snakePart.y)
+        linearGradientDirection.y2 += heightSquare;
+      // El cuadro anterior esta abajo
+      else if (lessSnakePart.y > snakePart.y)
+        linearGradientDirection.y1 -= heightSquare;
+      // El cuadro anterior esta a la izquierda
+      else if (lessSnakePart.x < snakePart.x) {
+        linearGradientDirection.x2 += widthSquare;
+      }
+      // El cuadro anterior esta a la derecha
+      else if (lessSnakePart.x > snakePart.x)
+        linearGradientDirection.x1 -= widthSquare;
+    }
+
+    return linearGradientDirection;
+  };
+
+  const getListColorPartSnacke = () => {
+    const maxIndex = snakeBody.length - 1;
+
+    const listColorPartSnacke = [];
+
+    // Asignando colores desbloqueados
+    for (const item of snakeBody) {
+      let index = snakeBody.indexOf(item);
+      if (index == 0) index = 0.05;
+
+      let porcentageCount = (index * 100) / maxIndex;
+      porcentageCount = porcentageCount / 100;
+
+      const color = `rgba(67, 217, 173, ${porcentageCount.toFixed(2)})`;
+
+      listColorPartSnacke.push({
+        0: "red",
+        1: color,
+        linearGradientDirection: getGrade(index),
+      });
+    }
+
+    for (const item of listColorPartSnacke) {
+      const index = listColorPartSnacke.indexOf(item);
+      const next = listColorPartSnacke[index + 1];
+
+      if (next) item[0] = next[1];
+      else item[0] = item[1];
+    }
+
+    return listColorPartSnacke.reverse();
+  };
+
+  const clearApple = () => {
+    const initialWidth = 6;
+    const sumWidth = 4;
+
+    let index = 0;
+    for (const ctxEclipse of listEclipseAppleCtx) {
+      const width = initialWidth + sumWidth * index;
+
+      ctxEclipse.beginPath();
+      ctxEclipse.clearRect(
+        apple.x - width,
+        apple.y - width,
+        width * 2,
+        width * 2
+      );
+
+      ctxEclipse.fill();
+      index++;
+    }
+  };
+
+  const printApple = () => {
+    const opacityEclipse = [1, 0.2, 0.1];
+    const initialWidth = 6;
+    const sumWidth = 4;
+
+    opacityEclipse.forEach((opacity, index) => {
+      const width = initialWidth + sumWidth * index;
+
+      ctx.beginPath();
+      ctx.arc(
+        apple.x - widthSquare / 2,
+        apple.y - widthSquare / 2,
+        width,
+        0,
+        Math.PI * 2
+      );
+      ctx.fillStyle = `rgba(${color}, ${opacity})`;
+      ctx.fill();
+
+      listEclipseAppleCtx.push(ctx);
+    });
+  };
+
+  const getPropertyDirectionSnake = (snakePart: { x: number; y: number }) => {
+    const direction = snake.direction;
+    const radio = widthSquare / 2;
+    const properties = {
+      x: 0,
+      y: 0,
+      width: radio,
+      startAngle: 180,
+      endAngle: 360,
+    };
+
+    if (direction == "top") {
+      properties.x = snakePart.x + radio;
+      properties.y = snakePart.y + heightSquare;
+    }
+
+    if (direction == "left") {
+      properties.x = snakePart.x + widthSquare;
+      properties.y = snakePart.y + radio;
+    }
+
+    if (direction == "bottom") {
+      properties.x = snakePart.x + radio;
+      properties.y = snakePart.y + radio / 2 - 2;
+    }
+
+    if (direction == "right") {
+      properties.x = snakePart.x + radio - 4;
+      properties.y = snakePart.y + radio;
+    }
+
+    return properties;
+  };
+
+  const printSnake = () => {
+    const colors = getListColorPartSnacke();
+    snakeBody.forEach((snakePart, index) => {
+      ctx.beginPath();
+      const color = colors[index];
+
+      const gradient = ctx.createLinearGradient(
+        color.linearGradientDirection.x1,
+        color.linearGradientDirection.y1,
+        color.linearGradientDirection.x2,
+        color.linearGradientDirection.y2
+      );
+
+      gradient.addColorStop(0, color[0]);
+      gradient.addColorStop(1, color[1]);
+
+      ctx.fillStyle = gradient;
+
+      if (index == 0) {
+        const properties = getPropertyDirectionSnake(snakePart);
+
+        ctx.arc(
+          properties.x,
+          properties.y,
+          properties.width,
+          properties.startAngle,
+          properties.endAngle
+        );
+      } else ctx.fillRect(snakePart.x, snakePart.y, widthSquare, heightSquare);
+      ctx.fill();
+    });
+
+    ctx.beginPath();
+  };
+
+  const clearSnake = () => {
+    snakeBody.forEach((snakePart) => {
+      ctx.clearRect(snakePart.x, snakePart.y, widthSquare, heightSquare);
+    });
+  };
+
+  const eventClickReload = (
+    event: MouseEvent,
+    rect: { x: number; y: number; width: number; height: number }
+  ) => {
+    const rectBounds = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rectBounds.left;
+    const mouseY = event.clientY - rectBounds.top;
+
+    const start = rect.x - rect.width / 2;
+    const startY = rect.y + rect.height / 2;
+
+    // Verificar si el ratón está sobre el rectángulo
+    if (
+      mouseX >= start &&
+      mouseX <= start + rect.width &&
+      mouseY >= startY &&
+      mouseY <= startY + rect.height
+    ) {
+      canvas.style.cursor = "pointer"; // Cambiar el cursor a pointer
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      gameOver = false;
+
+      snakeBody = JSON.parse(JSON.stringify(snakeBodyCopy));
+      snake = JSON.parse(JSON.stringify(snakeCopy));
+
+      setTimeout(() => {
+        requestAnimationFrame(initGame);
+      }, 100);
+    } else {
+      canvas.style.cursor = "default"; // Restaurar el cursor por defecto
+    }
+  };
+
+  const printTextAlert = (text: string) => {
+    const x = canvas.width / 2;
+    const y = Math.abs(canvas.height / 3 - canvas.height);
+
+    // Background
+    ctx.beginPath();
+
+    ctx.rect(0, y - 32, canvas.width, 48);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+
+    ctx.fill();
+
+    // Text
+    ctx.beginPath();
+    ctx.font = "24px 'Fira Code', monospace";
+    ctx.fillStyle = "#43D9AD";
+    ctx.textAlign = "center";
+
+    ctx.fillText(text, x, y);
+
+    // Reload game
+    ctx.beginPath();
+    ctx.font = "14px 'Fira Code', monospace";
+    ctx.fillStyle = "#607B96";
+    ctx.textAlign = "center";
+
+    ctx.fillText("Iniciar", x, y + 48);
+
+    const rect = { x: x, y: y, width: 100, height: 35 };
+    canvas.removeEventListener("click", (event) =>
+      eventClickReload(event, rect)
+    );
+    canvas.addEventListener("click", (event) => eventClickReload(event, rect));
+  };
+
+  // #endregion Drawing
+
+  // #region Gaming
+  const relocateSnakeBody = () => {
+    const newSnakePart = { x: snake.x, y: snake.y };
+
+    for (const item of snakeBody) {
+      const cloneSnakePart = Object.values(item);
+
+      item.x = newSnakePart.x;
+      item.y = newSnakePart.y;
+
+      newSnakePart.x = cloneSnakePart[0];
+      newSnakePart.y = cloneSnakePart[1];
+    }
+  };
+
+  const moveSnake = () => {
+    const direction = snake.direction;
+    if (direction == "top") snake.y -= widthSquare;
+    else if (direction == "right") snake.x += widthSquare;
+    else if (direction == "bottom") snake.y += widthSquare;
+    else if (direction == "left") snake.x -= widthSquare;
+
+    isEatApple();
+
+    clearSnake();
+    clearApple();
+
+    isGameOver();
+    isShowAlert();
+
+    if (!gameOver) printApple();
+
+    relocateSnakeBody();
+    printSnake();
+  };
+
+  const isEatApple = () => {
+    const isX = snake.x + 8 == apple.x;
+    const isY = snake.y + 8 == apple.y;
+
+    if (isX && isY) {
+      getRandomApple();
+      clearApple();
+      printApple();
+
+      // Agregando un nuevo snakePart
+      const lastSnakePart = snakeBody[snakeBody.length - 1];
+
+      snakeBody.push({
+        x: lastSnakePart.x,
+        y: lastSnakePart.y,
+      });
+    }
+  };
+
+  const isGameOver = () => {
+    const isEatSnake = snakeBody.find(
+      (item) => item.x == snake.x && item.y == snake.y
+    );
+
+    const isBorderX = snake.x <= 0 || snake.x >= canvas.width - widthSquare;
+    const isBorderY = snake.y <= 0 || snake.y >= canvas.height - heightSquare;
+
+    if (isEatSnake || isBorderX || isBorderY) gameOver = true;
+  };
+
+  const isShowAlert = () => {
+    if (gameOver) printTextAlert("Perdiste!");
+    else if (snakeBody.length > 50) {
+      gameOver = true;
+      printTextAlert("Ganaste!");
+    }
+  };
+
+  // Start game
+  let lastTime = 0;
+  let elapsed = 0;
+
+  const initGame = (timestamp: number) => {
+    if (gameOver) return;
+    // Calcular el tiempo transcurrido desde el último cuadro
+    const delta = timestamp - lastTime;
+    elapsed += delta;
+
+    // Si ha pasado 1 segundo, realiza la acción
+    if (elapsed >= snake.speed) {
+      moveSnake();
+
+      elapsed = 0; // Reinicia el acumulador
+    }
+
+    lastTime = timestamp;
+    requestAnimationFrame(initGame);
+  };
+
+  const changeDirection = (keyCode: number) => {
+    if (keyCode == 37) snake.direction = "left";
+    else if (keyCode == 38) snake.direction = "top";
+    else if (keyCode == 39) snake.direction = "right";
+    else if (keyCode == 40) snake.direction = "bottom";
+  };
+
+  document.addEventListener("keydown", (evt) => changeDirection(evt.keyCode));
+
+  const printCuadrillas = () => {
+    const rows = 45;
+    const cols = 45;
+    const cellWidth = 8;
+    const cellHeight = 8;
+
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const x = col * cellWidth;
+        const y = row * cellHeight;
+
+        // Dibujar el contorno del rectángulo
+        ctx.strokeRect(x, y, cellWidth, cellHeight);
+      }
+    }
+  };
+
+  getRandomApple();
+  printSnake();
+  printApple();
+
+  printCuadrillas();
+
+  (window as any).snakeBody = snakeBody;
+  (window as any).snake = snake;
+  (window as any).apple = apple;
+  // requestAnimationFrame(initGame);
+  // #endregion Gaming
+
+  // #region Gaming - Auto
+  const autoGame = () => {};
+
+  // #endregion Gaming - Auto
+</script>
