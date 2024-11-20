@@ -8,6 +8,11 @@
     speed: number;
   };
 
+  type Coordinate = {
+    x: number;
+    y: number;
+  };
+
   const getCanvas = () => {
     let canvas = document.querySelector("canvas");
     if (!canvas) canvas = document.createElement("canvas");
@@ -21,6 +26,7 @@
   const canvas = getCanvas();
   const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
+  const isAutoGame = true;
   const widthSquare = 8;
   const heightSquare = 8;
 
@@ -34,13 +40,7 @@
     speed: 200,
   };
 
-  const snakeCopy: Snake = {
-    x: 120,
-    y: 80,
-    direction: "top",
-    speed: 200,
-  };
-
+  const snakeCopy: Snake = JSON.parse(JSON.stringify(snake));
   let snakeBody = [
     { x: snake.x, y: snake.y },
     { x: snake.x, y: snake.y + 8 },
@@ -66,30 +66,7 @@
     { x: snake.x + 64, y: snake.y + 104 },
   ];
 
-  const snakeBodyCopy = [
-    { x: snake.x, y: snake.y },
-    { x: snake.x, y: snake.y + 8 },
-    { x: snake.x, y: snake.y + 16 },
-    { x: snake.x, y: snake.y + 24 },
-    { x: snake.x, y: snake.y + 32 },
-    { x: snake.x, y: snake.y + 40 },
-    { x: snake.x, y: snake.y + 48 },
-    { x: snake.x, y: snake.y + 56 },
-    { x: snake.x, y: snake.y + 64 },
-    { x: snake.x + 8, y: snake.y + 64 },
-    { x: snake.x + 16, y: snake.y + 64 },
-    { x: snake.x + 24, y: snake.y + 64 },
-    { x: snake.x + 32, y: snake.y + 64 },
-    { x: snake.x + 40, y: snake.y + 64 },
-    { x: snake.x + 48, y: snake.y + 64 },
-    { x: snake.x + 56, y: snake.y + 64 },
-    { x: snake.x + 64, y: snake.y + 64 },
-    { x: snake.x + 64, y: snake.y + 72 },
-    { x: snake.x + 64, y: snake.y + 80 },
-    { x: snake.x + 64, y: snake.y + 88 },
-    { x: snake.x + 64, y: snake.y + 96 },
-    { x: snake.x + 64, y: snake.y + 104 },
-  ];
+  const snakeBodyCopy = JSON.parse(JSON.stringify(snakeBody));
 
   const apple = {
     x: Math.floor(Math.random() * (canvas.width - 30)) + 30,
@@ -100,6 +77,8 @@
 
   // #region Drawing
   const getRandomApple = () => {
+    // apple.x = snake.x - 8;
+    // apple.y = snake.y - 8;
     if (gameOver) return;
     let x = Math.floor(Math.random() * (canvas.width - 30)) + 30;
     let y = Math.floor(Math.random() * (canvas.height - 30)) + 30;
@@ -188,13 +167,12 @@
     for (const ctxEclipse of listEclipseAppleCtx) {
       const width = initialWidth + sumWidth * index;
 
+      let x = apple.x - width;
+      let y = apple.y - width;
+
+      if (isAutoGame) y += 8;
       ctxEclipse.beginPath();
-      ctxEclipse.clearRect(
-        apple.x - width,
-        apple.y - width,
-        width * 2,
-        width * 2
-      );
+      ctxEclipse.clearRect(x, y, width * 2, width * 2);
 
       ctxEclipse.fill();
       index++;
@@ -210,13 +188,12 @@
       const width = initialWidth + sumWidth * index;
 
       ctx.beginPath();
-      ctx.arc(
-        apple.x - widthSquare / 2,
-        apple.y - widthSquare / 2,
-        width,
-        0,
-        Math.PI * 2
-      );
+      let x = apple.x - widthSquare / 2;
+      let y = apple.y - widthSquare / 2;
+
+      if (isAutoGame) y += 8;
+
+      ctx.arc(x, y, width, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${color}, ${opacity})`;
       ctx.fill();
 
@@ -326,7 +303,7 @@
       snake = JSON.parse(JSON.stringify(snakeCopy));
 
       setTimeout(() => {
-        requestAnimationFrame(initGame);
+        requestAnimationFrame(startGameManual);
       }, 100);
     } else {
       canvas.style.cursor = "default"; // Restaurar el cursor por defecto
@@ -372,16 +349,25 @@
 
   // #region Gaming
   const relocateSnakeBody = () => {
-    const newSnakePart = { x: snake.x, y: snake.y };
+    // Guardar las posiciones actuales del cuerpo en orden
+    const previousPositions = snakeBody.map((part) => ({
+      x: part.x,
+      y: part.y,
+    }));
 
-    for (const item of snakeBody) {
-      const cloneSnakePart = Object.values(item);
+    // Actualizar la posición del primer segmento con la posición actual de la cabeza
+    let newSnakePart = { x: snake.x, y: snake.y };
 
-      item.x = newSnakePart.x;
-      item.y = newSnakePart.y;
+    for (let i = 0; i < snakeBody.length; i++) {
+      // Guardar la posición original del segmento actual
+      const tempPosition = previousPositions[i];
 
-      newSnakePart.x = cloneSnakePart[0];
-      newSnakePart.y = cloneSnakePart[1];
+      // Asignar la nueva posición al segmento actual
+      snakeBody[i].x = newSnakePart.x;
+      snakeBody[i].y = newSnakePart.y;
+
+      // Actualizar `newSnakePart` para el siguiente segmento
+      newSnakePart = tempPosition;
     }
   };
 
@@ -422,6 +408,8 @@
         x: lastSnakePart.x,
         y: lastSnakePart.y,
       });
+
+      return true;
     }
   };
 
@@ -448,7 +436,7 @@
   let lastTime = 0;
   let elapsed = 0;
 
-  const initGame = (timestamp: number) => {
+  const startGameManual = (timestamp: number) => {
     if (gameOver) return;
     // Calcular el tiempo transcurrido desde el último cuadro
     const delta = timestamp - lastTime;
@@ -462,7 +450,7 @@
     }
 
     lastTime = timestamp;
-    requestAnimationFrame(initGame);
+    requestAnimationFrame(startGameManual);
   };
 
   const changeDirection = (keyCode: number) => {
@@ -474,11 +462,193 @@
 
   document.addEventListener("keydown", (evt) => changeDirection(evt.keyCode));
 
+  // #endregion Gaming
+
+  // #region Gaming - Auto
+  const manhattanDistance = (a: Coordinate, b: Coordinate) => {
+    return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+  };
+
+  // Get from CHAT-GPT
+  const findPath = (
+    start: Coordinate,
+    goal: Coordinate,
+    snakeBody: Coordinate[]
+  ) => {
+    const countScore = 100;
+    let openList: Coordinate[] = [start]; // Celdas a evaluar
+    let closedList: Coordinate[] = []; // Celdas ya evaluadas
+    let cameFrom: { [key: string]: Coordinate } = {}; // Para rastrear el camino
+
+    let gScore = Array(countScore)
+      .fill(countScore)
+      .map(() => Array(countScore).fill(Infinity));
+    let fScore = Array(countScore)
+      .fill(countScore)
+      .map(() => Array(countScore).fill(Infinity));
+
+    gScore[start.x][start.y] = 0;
+    fScore[start.x][start.y] = manhattanDistance(start, goal);
+
+    while (openList.length > 0) {
+      // Encuentra el nodo con menor fScore
+      let current = openList.reduce((a, b) =>
+        fScore[a.x][a.y] < fScore[b.x][b.y] ? a : b
+      );
+
+      if (current.x === goal.x && current.y === goal.y) {
+        // Construir el camino final
+        let path = [];
+        while (current) {
+          path.unshift(current);
+          current = cameFrom[`${current.x},${current.y}`];
+        }
+        return path;
+      }
+
+      // Mueve el nodo actual a la lista cerrada
+      openList = openList.filter((n) => n.x !== current.x || n.y !== current.y);
+      closedList.push(current);
+
+      // Explorar vecinos
+      const neighbors = [
+        { x: current.x + 1, y: current.y },
+        { x: current.x - 1, y: current.y },
+        { x: current.x, y: current.y + 1 },
+        { x: current.x, y: current.y - 1 },
+      ].filter(
+        (n) =>
+          n.x >= 0 &&
+          n.x < countScore &&
+          n.y >= 0 &&
+          n.y < countScore &&
+          !closedList.some((cl) => cl.x === n.x && cl.y === n.y) &&
+          !snakeBody.some((sb) => sb.x === n.x && sb.y === n.y) // Evitar obstáculos
+      );
+
+      for (let neighbor of neighbors) {
+        let tentativeGScore = gScore[current.x][current.y] + 1;
+
+        if (tentativeGScore < gScore[neighbor.x][neighbor.y]) {
+          cameFrom[`${neighbor.x},${neighbor.y}`] = current;
+          gScore[neighbor.x][neighbor.y] = tentativeGScore;
+          fScore[neighbor.x][neighbor.y] =
+            tentativeGScore + manhattanDistance(neighbor, goal);
+
+          if (!openList.some((n) => n.x === neighbor.x && n.y === neighbor.y)) {
+            openList.push(neighbor);
+          }
+        }
+      }
+    }
+
+    return []; // Sin solución
+  };
+
+  const moveToNextPoint = async (point: Coordinate) => {
+    // Cambiar dirección según el objetivo
+    if (snake.x > point.x) snake.direction = "left";
+    else if (snake.x < point.x) snake.direction = "right";
+    else if (snake.y > point.y) snake.direction = "top";
+    else if (snake.y < point.y) snake.direction = "bottom";
+
+    // Mover la cabeza al siguiente punto
+    snake.x = point.x;
+    snake.y = point.y;
+
+    // Actualizar cuerpo
+    relocateSnakeBody();
+
+    // Verificar si la serpiente come la manzana
+    const isEatAppleBool = isEatApple();
+
+    // Actualizar el tablero
+    clearSnake();
+    clearApple();
+
+    // Validar estado del juego
+    // isGameOver();
+    isShowAlert();
+
+    if (!gameOver) printApple();
+
+    // Dibujar nuevamente la serpiente
+    printSnake();
+
+    // Pausa según la velocidad
+    await new Promise((resolve) => setTimeout(resolve, snake.speed));
+    return isEatAppleBool;
+  };
+
+  const autoGame = async () => {
+    getRandomApple();
+    clearApple();
+
+    printSnake();
+    printApple();
+
+    const newSnake = { x: snake.x / widthSquare, y: snake.y / heightSquare };
+    const newApple = {
+      x: apple.x / widthSquare,
+      y: apple.y / heightSquare,
+    };
+    const newSnakeBody = snakeBody.map((item) => {
+      return { x: item.x / widthSquare, y: item.y / heightSquare };
+    });
+
+    const points = findPath(newSnake, newApple, newSnakeBody);
+
+    let index = 0;
+    for (const item of points) {
+      if (index == 0) {
+        index++;
+        continue;
+      }
+
+      const x = item.x * widthSquare;
+      const y = item.y * heightSquare;
+
+      await moveToNextPoint({ x, y });
+      if (snake.x == apple.x && snake.y == apple.y) {
+        const lastSnakePart = snakeBody[snakeBody.length - 1];
+
+        snakeBody.push({
+          x: lastSnakePart.x,
+          y: lastSnakePart.y,
+        });
+
+        autoGame();
+        break;
+      }
+
+      if (snakeBody.length > 50) {
+        gameOver = true;
+        printTextAlert("Ganaste!");
+        break;
+      }
+    }
+  };
+
+  // #endregion Gaming - Auto
+
+  // #region Start game
+  const initGame = () => {
+    if (isAutoGame) autoGame();
+    else requestAnimationFrame(startGameManual);
+  };
+
+  initGame();
+  // #endregion Start game
+
+  // #region Debug
   const printCuadrillas = () => {
     const rows = 45;
     const cols = 45;
     const cellWidth = 8;
     const cellHeight = 8;
+
+    printApple();
+    printSnake();
 
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
@@ -491,20 +661,6 @@
     }
   };
 
-  getRandomApple();
-  printSnake();
-  printApple();
-
-  printCuadrillas();
-
-  (window as any).snakeBody = snakeBody;
-  (window as any).snake = snake;
-  (window as any).apple = apple;
-  // requestAnimationFrame(initGame);
-  // #endregion Gaming
-
-  // #region Gaming - Auto
-  const autoGame = () => {};
-
-  // #endregion Gaming - Auto
+  // printCuadrillas();
+  // #endregion Debug
 </script>
