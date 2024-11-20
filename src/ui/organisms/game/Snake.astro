@@ -303,7 +303,8 @@
       snake = JSON.parse(JSON.stringify(snakeCopy));
 
       setTimeout(() => {
-        requestAnimationFrame(startGameManual);
+        if (isAutoGame) autoGame();
+        else requestAnimationFrame(startGameManual);
       }, 100);
     } else {
       canvas.style.cursor = "default"; // Restaurar el cursor por defecto
