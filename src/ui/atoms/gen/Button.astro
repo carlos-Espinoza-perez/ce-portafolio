@@ -1,0 +1,28 @@
+---
+type ButtonVariant = "primary" | "secondary" | "tertiary";
+interface Props {
+  variant?: ButtonVariant;
+}
+
+const { variant = "primary" } = Astro.props as Props;
+---
+
+<style>
+  button {
+    padding: 10px 14px;
+
+    background: #fea55f;
+    border-radius: 8px;
+
+    font-style: normal;
+    font-weight: 450;
+    font-size: 14px;
+    line-height: 18px;
+
+    color: #01080e;
+  }
+</style>
+
+<button>
+  <slot />
+</button>
