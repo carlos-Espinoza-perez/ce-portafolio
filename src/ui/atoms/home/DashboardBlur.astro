@@ -1,3 +1,7 @@
+---
+
+---
+
 <style>
   .dash-blur-2 {
     background: #607b96;
@@ -9,6 +13,24 @@
     background: #43d9ad;
     filter: blur(87px);
   }
+
+  .image-2 {
+    display: none;
+  }
+
+  @media screen and (min-width: 768px) {
+    .image-2 {
+      display: block;
+
+      opacity: 0.6;
+      margin-left: -102px;
+      margin-top: -48px;
+    }
+
+    .image-1 {
+      display: none;
+    }
+  }
 </style>
 
 <svg
@@ -17,6 +39,7 @@
   viewBox="0 0 787 732"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
+  class="image-1"
 >
   <g opacity="0.4" filter="url(#filter0_f_4924_589)">
     <path
@@ -66,6 +89,64 @@
         in2="BackgroundImageFix"
         result="shape"></feBlend>
       <feGaussianBlur stdDeviation="87" result="effect1_foregroundBlur_4924_589"
+      ></feGaussianBlur>
+    </filter>
+  </defs>
+</svg>
+
+<svg
+  width="1128"
+  height="1029"
+  viewBox="0 0 1128 1029"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  class="image-2"
+>
+  <g opacity="0.4" filter="url(#filter0_f_5016_590)">
+    <path
+      d="M723.947 854.705L510.032 803.318L420.664 738.654L447.227 568.142L622.649 548.576L621.041 426.833L823.309 372.577L953.603 403.876L871.166 669.982L743.893 703.172L723.947 854.705Z"
+      fill="#607B96"></path>
+  </g>
+  <g opacity="0.4" filter="url(#filter1_f_5016_590)">
+    <path
+      d="M673.469 257.667L689.984 477.046L655.759 581.911L485.295 608.783L413.003 447.755L297.588 486.528L184.059 310.554L174 176.932L452.567 174.013L523.099 285.032L673.469 257.667Z"
+      fill="#43D9AD"></path>
+  </g>
+  <defs>
+    <filter
+      id="filter0_f_5016_590"
+      x="246.664"
+      y="198.577"
+      width="880.938"
+      height="830.128"
+      filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB"
+    >
+      <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+      <feBlend
+        mode="normal"
+        in="SourceGraphic"
+        in2="BackgroundImageFix"
+        result="shape"></feBlend>
+      <feGaussianBlur stdDeviation="87" result="effect1_foregroundBlur_5016_590"
+      ></feGaussianBlur>
+    </filter>
+    <filter
+      id="filter1_f_5016_590"
+      x="0"
+      y="0.0129395"
+      width="863.983"
+      height="782.77"
+      filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB"
+    >
+      <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+      <feBlend
+        mode="normal"
+        in="SourceGraphic"
+        in2="BackgroundImageFix"
+        result="shape"></feBlend>
+      <feGaussianBlur stdDeviation="87" result="effect1_foregroundBlur_5016_590"
       ></feGaussianBlur>
     </filter>
   </defs>

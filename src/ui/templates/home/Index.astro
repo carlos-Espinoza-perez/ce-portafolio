@@ -1,5 +1,6 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
+import { Footer } from "../../molecules";
 import { Dashboard, Game } from "../../organisms";
 import ButtonActionHome from "../../organisms/home/ButtonActionHome.astro";
 ---
@@ -8,4 +9,16 @@ import ButtonActionHome from "../../organisms/home/ButtonActionHome.astro";
   <Dashboard />
   <Game />
   <ButtonActionHome />
+
+  <div class="footer-page">
+    <Footer isMovile={false} />
+  </div>
 </Layout>
+
+<style>
+  @media screen and (max-width: 760px) {
+    .footer-page {
+      display: none;
+    }
+  }
+</style>

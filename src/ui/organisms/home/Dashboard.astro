@@ -47,10 +47,17 @@ import { DashboardBlur } from "../../atoms";
     z-index: -1;
 
     width: 150vw;
+    height: 90vh;
     left: -50%;
     top: 16px;
 
     overflow: hidden;
+
+    @media screen and (min-width: 760px) {
+      width: 100vw;
+      left: 0;
+      top: 78px;
+    }
   }
 
   @keyframes typingEffect {

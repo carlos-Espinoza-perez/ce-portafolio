@@ -4,42 +4,6 @@ import { FacebookIcon, GithubIcon, TwitterIcon } from "../../atoms";
 const { isMovile } = Astro.props;
 ---
 
-<footer>
-  <div class="footer-container">
-    <div class="line-footer"></div>
-    <h4 class="encuentrame">Encuentrame en:</h4>
-
-    <ul class="social-media">
-      <li class="icon-social twitter">
-        <TwitterIcon />
-      </li>
-
-      <li class="icon-social facebook">
-        <FacebookIcon />
-      </li>
-
-      {
-        isMovile && (
-          <li class="icon-social github">
-            <GithubIcon />
-          </li>
-        )
-      }
-    </ul>
-
-    {
-      !isMovile && (
-        <ul>
-          <li>
-            <a>@carlos-Espinoza-perez</a>
-            <GithubIcon />
-          </li>
-        </ul>
-      )
-    }
-  </div>
-</footer>
-
 <style>
   footer {
     padding: 0px 15px 15px 15px;
@@ -100,4 +64,80 @@ const { isMovile } = Astro.props;
       }
     }
   }
+
+  .footer-big {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+
+    top: 92.5dvh;
+
+    * {
+      border-width: 1px !important;
+      border-color: transparent;
+    }
+
+    .footer-container {
+      display: grid;
+      grid-template-columns: 194px auto 1fr;
+      justify-content: start;
+    }
+
+    .facebook {
+      border-right: 1px solid var(--color-line-gray) !important;
+    }
+
+    .github-social {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: end;
+      color: var(--color-text-gray);
+
+      li {
+        display: flex;
+        gap: 6px;
+        height: 100%;
+        align-items: center;
+        /* border-left: 2px solid var(--color-line-gray) !important; */
+        padding-left: 12px;
+      }
+    }
+  }
 </style>
+
+<footer class={isMovile ? "footer-movile" : "footer-big"}>
+  <div class="footer-container">
+    <div class="line-footer"></div>
+    <h4 class="encuentrame">Encuentrame en:</h4>
+
+    <ul class="social-media">
+      <li class="icon-social twitter">
+        <TwitterIcon />
+      </li>
+
+      <li class="icon-social facebook">
+        <FacebookIcon />
+      </li>
+
+      {
+        isMovile && (
+          <li class="icon-social github">
+            <GithubIcon />
+          </li>
+        )
+      }
+    </ul>
+
+    {
+      !isMovile && (
+        <ul class="github-social">
+          <li>
+            <a>@carlos-Espinoza-perez</a>
+            <GithubIcon />
+          </li>
+        </ul>
+      )
+    }
+  </div>
+</footer>
