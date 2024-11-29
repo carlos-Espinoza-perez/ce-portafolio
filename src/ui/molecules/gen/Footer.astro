@@ -21,10 +21,17 @@ const { isMovile } = Astro.props;
 
     .line-footer {
       width: 100%;
-      height: 2px;
+
+      height: 1px;
       background: var(--color-line-gray);
       position: absolute;
       top: 0;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .line-footer {
+      border-top: 0;
     }
   }
 

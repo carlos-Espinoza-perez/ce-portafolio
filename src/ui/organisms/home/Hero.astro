@@ -1,0 +1,25 @@
+---
+import Game from "../game/Game.astro";
+import ButtonActionHome from "./ButtonActionHome.astro";
+import Dashboard from "./Dashboard.astro";
+---
+
+<style>
+  @media screen and (min-width: 1024px) {
+    .hero {
+      display: flex;
+      height: calc(100dvh - 124px);
+      justify-content: space-around;
+      align-items: center;
+    }
+  }
+</style>
+
+<section class="hero">
+  <Dashboard />
+
+  <div>
+    <Game />
+    <ButtonActionHome />
+  </div>
+</section>

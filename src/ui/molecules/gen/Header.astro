@@ -102,13 +102,70 @@ import Footer from "../gen/Footer.astro";
   }
 </style>
 
+<style>
+  .option-header {
+    display: none;
+  }
+
+  @media screen and (min-width: 1024px) {
+    .btn-menu {
+      display: none;
+    }
+
+    .line-header {
+      height: 1px !important;
+
+      margin-left: -24px !important;
+      width: 100vw !important;
+    }
+
+    .options-header {
+      justify-content: start;
+      gap: 60px;
+    }
+
+    .option-header {
+      display: initial;
+      position: relative;
+      padding: 0px 30px;
+      cursor: pointer;
+      font-size: 15px;
+
+      &::before {
+        content: "";
+        height: 64px;
+        width: 1px;
+        background: var(--color-line-gray);
+        position: absolute;
+        top: -24px;
+        left: 0;
+      }
+    }
+
+    .contact-me {
+      margin-left: auto;
+      margin-right: -20px;
+
+      color: #fff4f4;
+    }
+  }
+</style>
+
 <div>
   <div class="height-header"></div>
 
   <header class="fixed top-0 w-full">
     <nav class="nav-container">
-      <ul>
+      <ul class="options-header">
         <li class="brand-name">carlos-espinoza</li>
+
+        <ul>
+          <li class="option-header">inicio</li>
+          <li class="option-header">acerca-de</li>
+          <li class="option-header">proyectos</li>
+        </ul>
+
+        <li class="option-header contact-me">contáctame</li>
         <li class="btn-menu">
           <MenuIcon />
           <CloseIcon />
@@ -123,7 +180,7 @@ import Footer from "../gen/Footer.astro";
         <li class="option-menu">_incio</li>
         <li class="option-menu">_acerca-de</li>
         <li class="option-menu">_proyectos</li>
-        <li class="option-menu">_contactame</li>
+        <li class="option-menu">_contáctame</li>
       </ul>
 
       <Footer isMovile={true} />
