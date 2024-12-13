@@ -42,7 +42,12 @@ import { DashboardBlur } from "../../atoms";
     }
   }
 
-  @media screen and (max-width: 1024px) {
+  @media screen and (min-width: 1024px) {
+    main {
+      padding-left: 10px;
+      padding-right: 0;
+    }
+
     .wrapper-text {
       h1 {
         margin-top: 16px;
@@ -89,10 +94,23 @@ import { DashboardBlur } from "../../atoms";
     }
   }
 
+  @media screen and (max-width: 1024px) {
+    .language-js {
+      display: none;
+    }
+  }
+
   .language-js {
     background-color: transparent;
     padding: 0;
     margin-left: -55px;
+    margin-top: 20px;
+    line-height: 1.8;
+
+    .hljs-string {
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 </style>
 
@@ -191,6 +209,16 @@ import { DashboardBlur } from "../../atoms";
 
   // Then register the languages you need
   hljs.registerLanguage("javascript", javascript);
-
   hljs.highlightAll();
+
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    if (!target) return;
+
+    const isText = target.className.includes("hljs-string");
+    const isLinkText = isText && target.innerHTML.includes("https://");
+    const text = target.innerText.replaceAll('"', "");
+
+    if (isLinkText && window) window.open(text, "_blank")?.focus();
+  });
 </script>

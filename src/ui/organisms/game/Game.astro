@@ -25,16 +25,6 @@ import Snake from "./Snake.astro";
     z-index: -1;
   }
 
-  .game__wrapper {
-    width: 100%;
-    height: 100%;
-    background-color: red;
-
-    background: rgba(1, 22, 39, 0.84);
-    box-shadow: inset 1px 5px 11px rgba(2, 18, 27, 0.71);
-    border-radius: 8px;
-  }
-
   .game__bolt {
     width: 10px;
     height: 10px;
@@ -42,6 +32,17 @@ import Snake from "./Snake.astro";
     border-radius: 50%;
 
     position: absolute;
+
+    &::before {
+      content: "x";
+      font-size: 11px;
+      height: 2px;
+      display: block;
+      margin-top: -4px;
+      margin-left: 1.5px;
+      color: #114944;
+      font-family: cursive;
+    }
   }
 
   .game__bolt--left-top {
@@ -99,6 +100,28 @@ import Snake from "./Snake.astro";
     bottom: 8px;
     right: 7px;
   }
+
+  @media screen and (min-width: 1024px) {
+    .game {
+      height: 420px;
+      width: 280px;
+    }
+  }
+
+  @media screen and (min-width: 1440px) {
+    .game {
+      width: 540px;
+
+      background: linear-gradient(
+        150.26deg,
+        rgba(23, 85, 83, 0.7) 1.7%,
+        rgba(67, 217, 173, 0.091) 81.82%
+      );
+      border: 1px solid #0c1616;
+      box-shadow: inset 0px 2px 0px rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(32px);
+    }
+  }
 </style>
 
 <div class="game">
@@ -107,7 +130,5 @@ import Snake from "./Snake.astro";
   <div class="game__bolt game__bolt--right-top"></div>
   <div class="game__bolt game__bolt--right-bottom"></div>
 
-  <div class="game__wrapper">
-    <Snake />
-  </div>
+  <Snake />
 </div>
