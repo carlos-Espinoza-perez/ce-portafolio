@@ -1,5 +1,7 @@
 ---
 import Button from "../../atoms/gen/Button.astro";
+
+const { class: className } = Astro.props;
 ---
 
 <style>
@@ -10,8 +12,18 @@ import Button from "../../atoms/gen/Button.astro";
     align-items: center;
     margin-top: -80px;
   }
+
+  .hero__game__button {
+    display: none;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .hero__game__button {
+      display: flex;
+    }
+  }
 </style>
 
-<div class="wrapper-button">
+<div class:list={className + " wrapper-button"}>
   <Button> Acerca de mí </Button>
 </div>

@@ -17,6 +17,7 @@ import { CircleIcon } from "../../atoms";
     background: rgba(1, 22, 39, 0.84);
     box-shadow: inset 1px 5px 11px rgba(2, 18, 27, 0.71);
     border-radius: 12px;
+    cursor: pointer;
   }
 
   .game_actions {
@@ -99,10 +100,10 @@ import { CircleIcon } from "../../atoms";
       </div>
 
       <div class="game_control__keys">
-        <button class="game_control__key up">↑</button>
-        <button class="game_control__key left">←</button>
-        <button class="game_control__key down">↓</button>
-        <button class="game_control__key right">→</button>
+        <button class="game_control__key up" data-key="38">↑</button>
+        <button class="game_control__key left" data-key="37">←</button>
+        <button class="game_control__key down" data-key="40">↓</button>
+        <button class="game_control__key right" data-key="39">→</button>
       </div>
     </div>
 
@@ -110,18 +111,11 @@ import { CircleIcon } from "../../atoms";
       <p>// Puntos</p>
 
       <div class="game_points__list">
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
-        <CircleIcon />
+        <CircleIcon class:list={["game_points__item"]} />
+        <CircleIcon class:list={["game_points__item"]} />
+        <CircleIcon class:list={["game_points__item"]} />
+        <CircleIcon class:list={["game_points__item"]} />
+        <CircleIcon class:list={["game_points__item"]} />
       </div>
     </div>
   </div>
@@ -162,7 +156,7 @@ import { CircleIcon } from "../../atoms";
   const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
   const isAutoGame = document.body.offsetWidth < 1440;
-  const gameStart = document.body.offsetWidth < 1024;
+  let gameStart = document.body.offsetWidth < 1024;
 
   const widthSquare = 8;
   const heightSquare = 8;
@@ -206,8 +200,14 @@ import { CircleIcon } from "../../atoms";
   const snakeBodyCopy = JSON.parse(JSON.stringify(snakeBody));
 
   const apple = {
-    x: Math.floor(Math.random() * (canvas.width - 30)) + 30,
-    y: Math.floor(Math.random() * (canvas.height - 30)) + 30,
+    x:
+      Math.round(
+        (Math.floor(Math.random() * (canvas.width - 30)) + 30) / widthSquare
+      ) * widthSquare,
+    y:
+      Math.round(
+        (Math.floor(Math.random() * (canvas.height - 30)) + 30) / heightSquare
+      ) * heightSquare,
   };
 
   let gameOver = false;
@@ -440,6 +440,7 @@ import { CircleIcon } from "../../atoms";
       snake = JSON.parse(JSON.stringify(snakeCopy));
 
       setTimeout(() => {
+        gameStart = true;
         if (isAutoGame) autoGame();
         else requestAnimationFrame(startGameManual);
       }, 100);
@@ -517,6 +518,7 @@ import { CircleIcon } from "../../atoms";
       else if (direction == "bottom") snake.y += widthSquare;
       else if (direction == "left") snake.x -= widthSquare;
     }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     isEatApple();
 
@@ -529,6 +531,8 @@ import { CircleIcon } from "../../atoms";
     if (!gameOver) printApple();
 
     if (gameStart) relocateSnakeBody();
+    else printTextAlert("Deseas jugar?");
+
     printSnake();
   };
 
@@ -548,6 +552,11 @@ import { CircleIcon } from "../../atoms";
         x: lastSnakePart.x,
         y: lastSnakePart.y,
       });
+
+      // Agregando un nuevo punto
+      const parent = document.querySelector(".game_points__list");
+      const points = document.querySelector(".game_points__item");
+      if (parent && points) parent.appendChild(points.cloneNode(true));
 
       return true;
     }
@@ -605,6 +614,14 @@ import { CircleIcon } from "../../atoms";
   };
 
   document.addEventListener("keydown", (evt) => changeDirection(evt.keyCode));
+  const listKeyHtml = document.querySelectorAll(".game_control__key");
+
+  listKeyHtml.forEach((item) => {
+    item.addEventListener("click", (evt) => {
+      const keyCode = (evt.target as any).dataset.key;
+      changeDirection(keyCode);
+    });
+  });
 
   // #endregion Gaming
 
@@ -734,10 +751,10 @@ import { CircleIcon } from "../../atoms";
     const newSnake = { x: snake.x / widthSquare, y: snake.y / heightSquare };
     const newApple = {
       x: apple.x / widthSquare,
-      y: apple.y / heightSquare,
+      y: apple.y / widthSquare,
     };
     const newSnakeBody = snakeBody.map((item) => {
-      return { x: item.x / widthSquare, y: item.y / heightSquare };
+      return { x: item.x / widthSquare, y: item.y / widthSquare };
     });
 
     const points = findPath(newSnake, newApple, newSnakeBody);

@@ -5,6 +5,16 @@ import Dashboard from "./Dashboard.astro";
 ---
 
 <style>
+  .hero__game__button {
+    display: none;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .hero__game__button {
+      display: block;
+    }
+  }
+
   @media screen and (min-width: 1024px) {
     .hero {
       display: flex;
@@ -13,13 +23,26 @@ import Dashboard from "./Dashboard.astro";
       align-items: center;
     }
   }
+
+  @media screen and (min-width: 1440px) {
+    .hero {
+      max-width: 1440px;
+      margin: 0 auto;
+      justify-content: space-between;
+    }
+  }
+
+  .hero__game {
+    position: relative;
+    z-index: 1;
+  }
 </style>
 
 <section class="hero">
   <Dashboard />
 
-  <div>
+  <div class="hero__game">
     <Game />
-    <!-- <ButtonActionHome /> -->
+    <ButtonActionHome class="hero__game__button" />
   </div>
 </section>
