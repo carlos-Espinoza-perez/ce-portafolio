@@ -1,5 +1,6 @@
 ---
 import { FacebookIcon, GithubIcon, TwitterIcon } from "../../atoms";
+import VARIABLES from "../../../common/Variables";
 
 const { isMovile } = Astro.props;
 ---
@@ -100,6 +101,11 @@ const { isMovile } = Astro.props;
       display: flex;
       justify-content: end;
       color: var(--color-text-gray);
+      transition: 0.2s;
+
+      &:hover {
+        color: white;
+      }
 
       li {
         display: flex;
@@ -120,17 +126,23 @@ const { isMovile } = Astro.props;
 
     <ul class="social-media">
       <li class="icon-social twitter">
-        <TwitterIcon />
+        <a href={VARIABLES.redes.twitter}>
+          <TwitterIcon />
+        </a>
       </li>
 
       <li class="icon-social facebook">
-        <FacebookIcon />
+        <a href={VARIABLES.redes.facebook} target="_blank">
+          <FacebookIcon />
+        </a>
       </li>
 
       {
         isMovile && (
           <li class="icon-social github">
-            <GithubIcon />
+            <a href={VARIABLES.redes.github} target="_blank">
+              <GithubIcon />
+            </a>
           </li>
         )
       }
@@ -140,7 +152,9 @@ const { isMovile } = Astro.props;
       !isMovile && (
         <ul class="github-social">
           <li>
-            <a>@carlos-Espinoza-perez</a>
+            <a href={VARIABLES.redes.github} target="_blank">
+              @carlos-Espinoza-perez
+            </a>
             <GithubIcon />
           </li>
         </ul>

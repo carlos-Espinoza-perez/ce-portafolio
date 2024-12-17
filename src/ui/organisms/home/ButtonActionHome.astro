@@ -25,5 +25,7 @@ const { class: className } = Astro.props;
 </style>
 
 <div class:list={className + " wrapper-button"}>
-  <Button> Acerca de mí </Button>
+  <a href="/about-me">
+    <Button> Acerca de mí </Button>
+  </a>
 </div>
